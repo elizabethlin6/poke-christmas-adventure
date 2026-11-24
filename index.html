@@ -1,0 +1,2706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Poké-Holiday" />
+  <meta name="application-name" content="Poké-Holiday" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Poké-Holiday</title>
+  <link id="app-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Ccircle cx='12' cy='14' r='1.5' fill='%23fef08a'/%3E%3Ccircle cx='52' cy='12' r='1.5' fill='%23bae6fd'/%3E%3Cpath d='M0 50 Q32 45 64 50 L64 64 L0 64 Z' fill='%23f8fafc'/%3E%3Crect x='46' y='34' width='4' height='18' fill='%2378350f'/%3E%3Cpath d='M38 24 h16 a4 4 0 0 1 4 4 v8 h-20 z' fill='%23dc2626'/%3E%3Cpath d='M38 24 h16 a4 4 0 0 1 4 4 v2 h-20 z' fill='%23ffffff'/%3E%3Crect x='52' y='18' width='2.5' height='8' fill='%23facc15'/%3E%3Crect x='54.5' y='18' width='4' height='3' fill='%23facc15'/%3E%3Ccircle cx='24' cy='38' r='15' fill='%23ffffff' stroke='%23020617' stroke-width='2.5'/%3E%3Cpath d='M9 38 A15 15 0 0 1 39 38 Z' fill='%23ef4444' stroke='%23020617' stroke-width='2.5'/%3E%3Cline x1='9' y1='38' x2='39' y2='38' stroke='%23020617' stroke-width='3'/%3E%3Ccircle cx='24' cy='38' r='4.5' fill='%23ffffff' stroke='%23020617' stroke-width='2.5'/%3E%3Cpath d='M13 26 Q22 10 38 17 L34 26 Z' fill='%23dc2626' stroke='%23020617' stroke-width='1.5'/%3E%3Crect x='11' y='24' width='25' height='5' rx='2.5' fill='%23ffffff' stroke='%23020617' stroke-width='1.5'/%3E%3Ccircle cx='39' cy='18' r='3.5' fill='%23ffffff' stroke='%23020617' stroke-width='1.5'/%3E%3C/svg%3E" />
+  <style>
+    /* =========================================================================
+       ZERO-DEPENDENCY RETRO PIXEL & HANDHELD STYLING
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-deep: #020617;
+      --bg-panel: #0f172a;
+      --bg-card: #1e293b;
+      --border-subtle: #334155;
+      --accent-gold: #fbbf24;
+      --accent-red: #e11d48;
+      --accent-green: #10b981;
+      --accent-sky: #38bdf8;
+      --text-white: #ffffff;
+      --text-muted: #94a3b8;
+      --placeholder-gray: #64748b;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1e293b 0%, #0f172a 60%, #020617 100%);
+      color: var(--text-white);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 16px;
+      gap: 10px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 2px solid #334155;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pokeball-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #020617;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .pokeball-top { height: 46%; background: #f43f5e; }
+    .pokeball-mid {
+      height: 8%;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pokeball-btn {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #020617;
+    }
+    .pokeball-bot { height: 46%; background: #ffffff; }
+
+    .brand-title {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--accent-gold);
+    }
+    .brand-sub {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: #7dd3fc;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 7px 11px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: transform 0.08s ease, filter 0.12s ease;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:active { transform: translateY(1px) scale(0.98); }
+
+    .btn-slate {
+      background: #1e293b;
+      color: #6ee7b7;
+      border: 1px solid #475569;
+    }
+    .btn-amber {
+      background: #d97706;
+      color: #ffffff;
+      border: 1px solid #fbbf24;
+    }
+    .btn-rose {
+      background: #e11d48;
+      color: #ffffff;
+      border: 1px solid #fda4af;
+    }
+    .btn-emerald {
+      background: linear-gradient(180deg, #10b981, #059669);
+      color: #022c22;
+      border-bottom: 3px solid #064e3b;
+      font-weight: 800;
+    }
+    .btn-sky {
+      background: #38bdf8;
+      color: #082f49;
+      font-weight: 800;
+    }
+    .btn-primary-send {
+      background: linear-gradient(90deg, #e11d48, #dc2626, #d97706);
+      color: #ffffff;
+      border-bottom: 4px solid #881337;
+      padding: 11px 18px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(225, 29, 72, 0.35);
+    }
+
+    /* Handheld Console Shell */
+    .console-shell {
+      width: 100%;
+      max-width: 760px;
+      background: linear-gradient(180deg, #be123c 0%, #b91c1c 55%, #9f1239 100%);
+      padding: 12px;
+      border-radius: 24px;
+      border: 4px solid #4c0519;
+      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.65);
+    }
+
+    .screen-bezel {
+      background: #020617;
+      border-radius: 16px;
+      padding: 10px;
+      border: 4px solid #1e293b;
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.85);
+    }
+
+    .hud-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      font-size: 11px;
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #fde68a;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulse 1.4s infinite;
+    }
+
+    .hud-right {
+      color: #7dd3fc;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .canvas-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #0c4a6e;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #334155;
+    }
+
+    #game-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Floating Badges on Canvas */
+    .badge-berry {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      background: rgba(76, 5, 25, 0.92);
+      border: 2px solid #fb7185;
+      color: #fecdd3;
+      padding: 4px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-interact {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      background: #fbbf24;
+      color: #020617;
+      border: 2px solid #020617;
+      padding: 4px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* Classic Pokémon Dialog Box */
+    .dialog-wrap {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 20;
+    }
+
+    .pokeball-dialog {
+      background: #ffffff;
+      color: #0f172a;
+      border: 4px solid #0f172a;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 3px #ef4444, 0 8px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .dialog-speaker { color: #e11d48; text-transform: uppercase; }
+    .dialog-hint { color: #64748b; font-weight: 600; }
+
+    .dialog-body {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: 600;
+      color: #0f172a;
+      min-height: 2.8em;
+    }
+
+    .dialog-arrow {
+      text-align: right;
+      color: #e11d48;
+      font-size: 11px;
+      font-weight: 800;
+      animation: bounceArrow 0.8s infinite;
+    }
+
+    /* Stage Overlays (Mailbox Animation, Gift Sent, Recipient Welcome, Card) */
+    .stage-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: rgba(2, 6, 23, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      overflow-y: auto;
+    }
+
+    .overlay-card {
+      background: #0f172a;
+      border: 3px solid #fbbf24;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+    }
+
+    .overlay-card.emerald-border { border-color: #34d399; }
+
+    .pill-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid #34d399;
+      color: #6ee7b7;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .overlay-title {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #fbbf24;
+      line-height: 1.35;
+    }
+
+    .overlay-desc {
+      margin: 0 0 12px;
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    .link-box {
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 8px;
+      text-align: left;
+      margin-bottom: 12px;
+    }
+    .link-box label {
+      display: block;
+      font-size: 10px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    .link-row {
+      display: flex;
+      gap: 6px;
+    }
+    .link-input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 6px 8px;
+      color: #38bdf8;
+      font-family: inherit;
+      font-size: 11px;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .btn-row .btn { flex: 1 1 140px; padding: 10px 12px; }
+
+    /* Unwrapped Holiday Card */
+    .holiday-paper {
+      background: linear-gradient(180deg, #fffbeb 0%, #fff1f2 100%);
+      color: #0f172a;
+      border: 4px solid #f59e0b;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 18px;
+      text-align: left;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8);
+    }
+    .paper-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #fecdd3;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #e11d48;
+    }
+    .paper-salutation {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #be123c;
+    }
+    .paper-message {
+      margin: 0 0 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #1e293b;
+      white-space: pre-line;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    .paper-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-top: 2px solid #fecdd3;
+      padding-top: 10px;
+    }
+
+    /* Handheld Controls Deck */
+    .controls-deck {
+      margin-top: 12px;
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dpad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 36px);
+      grid-template-rows: repeat(3, 36px);
+      gap: 2px;
+    }
+
+    .dpad-btn {
+      background: #1e293b;
+      border: 2px solid #020617;
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 0 #020617;
+      transition: transform 0.05s ease;
+    }
+    .dpad-btn:active, .dpad-btn.pressed {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #020617;
+      background: #334155;
+    }
+    .dpad-up { border-radius: 10px 10px 0 0; }
+    .dpad-left { border-radius: 10px 0 0 10px; }
+    .dpad-center {
+      background: #1e293b;
+      border: 2px solid #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dpad-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #334155;
+    }
+    .dpad-right { border-radius: 0 10px 10px 0; }
+    .dpad-down { border-radius: 0 0 10px 10px; }
+
+    .speaker-grill {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+    }
+    .grill-slots {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 4px;
+    }
+    .grill-slot {
+      width: 5px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(76, 5, 25, 0.7);
+      transform: rotate(14deg);
+    }
+    .controls-caption {
+      margin: 0;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fecdd3;
+    }
+
+    .ab-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ab-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .ab-unit.offset-b { margin-top: 18px; }
+    .ab-unit.offset-a { margin-bottom: 18px; }
+
+    .round-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      color: #020617;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.55);
+      transition: transform 0.05s ease;
+    }
+    .round-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+    }
+    .btn-b-circle {
+      background: #f59e0b;
+      border-bottom: 3px solid #b45309;
+    }
+    .btn-a-circle {
+      background: #34d399;
+      border-bottom: 3px solid #047857;
+    }
+    .ab-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #fecdd3;
+    }
+
+    /* =========================================================================
+       CREATE YOUR POKÉMON HOLIDAY GIFT STUDIO MODAL
+       ========================================================================= */
+    .studio-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(2, 6, 23, 0.74);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .studio-modal {
+      background: #0f172a;
+      border: 3px solid #fbbf24;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+    }
+
+    .studio-header {
+      background: linear-gradient(90deg, #be123c, #b91c1c);
+      padding: 12px 16px;
+      border-bottom: 2px solid #fbbf24;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .studio-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fde047;
+    }
+    .studio-sub {
+      margin: 3px 0 0;
+      font-size: 11px;
+      color: #ffe4e6;
+    }
+
+    .preview-box {
+      width: 96px;
+      height: 36px;
+      background: rgba(12, 74, 110, 0.8);
+      border: 1px solid rgba(253, 224, 71, 0.7);
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .studio-body {
+      padding: 14px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 600px) {
+      .two-col { grid-template-columns: 1fr 1fr; }
+    }
+
+    .panel-box {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 11px;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 7px;
+    }
+    .label-sky { color: #7dd3fc; }
+    .label-rose { color: #fda4af; }
+    .label-amber { color: #fcd34d; }
+    .label-emerald { color: #6ee7b7; }
+
+    /* Bright White User Input vs Muted Gray Placeholders */
+    .gift-input, .gift-select, .gift-textarea {
+      width: 100%;
+      background: #020617;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 7px 10px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 13px;
+      user-select: text;
+    }
+    .gift-input::placeholder,
+    .gift-textarea::placeholder {
+      color: #64748b;
+      opacity: 1;
+    }
+    .gift-input:focus, .gift-select:focus, .gift-textarea:focus {
+      outline: none;
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.25);
+    }
+
+    .swatch-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .swatch-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .swatch-caption {
+      font-size: 10px;
+      color: #94a3b8;
+      min-width: 36px;
+    }
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .swatch-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid #334155;
+      cursor: pointer;
+      padding: 0;
+    }
+    .swatch-btn.active {
+      border-color: #fbbf24;
+      transform: scale(1.14);
+      box-shadow: 0 0 0 1px #020617;
+    }
+
+    .hat-pills {
+      display: flex;
+      gap: 5px;
+    }
+    .hat-pill {
+      background: #020617;
+      color: #cbd5e1;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .hat-pill.active {
+      background: #fbbf24;
+      color: #020617;
+      border-color: #fbbf24;
+    }
+
+    .pokemon-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    @media (min-width: 560px) {
+      .pokemon-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+
+    .poke-card {
+      background: #020617;
+      border: 2px solid #334155;
+      border-radius: 10px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .poke-card:hover { border-color: #64748b; }
+    .poke-card.selected {
+      background: rgba(251, 191, 36, 0.14);
+      border-color: #fbbf24;
+      color: #fde047;
+    }
+
+    .studio-footer {
+      background: #020617;
+      padding: 11px 16px;
+      border-top: 1px solid #1e293b;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .footer-note {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    /* Mailbox Animation Canvas */
+    #mailbox-anim-canvas {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 8 / 5;
+      border-radius: 12px;
+      border: 3px solid #fbbf24;
+      background: #0f172a;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+    }
+    .mailbox-caption {
+      margin-top: 10px;
+      padding: 7px 14px;
+      border-radius: 10px;
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      color: #fde047;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(3px); }
+    }
+    @media (max-width: 520px) {
+      .speaker-grill { display: none; }
+      .console-shell { padding: 8px; border-radius: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation & Quick Mode Switcher -->
+  <header class="top-bar">
+    <div class="brand">
+      <div class="pokeball-icon" aria-hidden="true">
+        <div class="pokeball-top"></div>
+        <div class="pokeball-mid"><div class="pokeball-btn"></div></div>
+        <div class="pokeball-bot"></div>
+      </div>
+      <div>
+        <h1 class="brand-title">OUR ADVENTURE</h1>
+        <p class="brand-sub">Frostleaf Town Holiday Edition</p>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button id="btn-music" type="button" class="btn btn-slate">
+        <span id="music-icon">🔇</span>
+        <span id="music-label">BGM: OFF</span>
+      </button>
+      <button id="btn-read-card-top" type="button" class="btn btn-amber">
+        📖 Read Card
+      </button>
+      <button id="btn-share-gift-top" type="button" class="btn btn-sky">
+        📤 Share Gift
+      </button>
+      <button id="btn-edit-gift-top" type="button" class="btn btn-rose">
+        ✏️ Edit Gift
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Handheld Console Shell -->
+  <main class="console-shell">
+    <div class="screen-bezel">
+      <!-- Screen Status HUD -->
+      <div class="hud-bar">
+        <div class="hud-left">
+          <span class="pulse-dot"></span>
+          <span>FROSTLEAF TOWN</span>
+        </div>
+        <div id="hud-quest" class="hud-right">Walk north to the Christmas Tree!</div>
+      </div>
+
+      <!-- Responsive 4:3 Pixel Canvas Stage -->
+      <div id="canvas-stage" class="canvas-stage">
+        <canvas id="game-canvas" width="256" height="192"></canvas>
+
+        <!-- Berry Inventory Badge -->
+        <div id="berry-badge" class="badge-berry hidden">🍓 FESTIVE BERRY x1</div>
+
+        <!-- Interaction Prompt -->
+        <div id="interact-hint" class="badge-interact hidden">PRESS [A] / SPACE</div>
+
+        <!-- 1. Animated Mailbox Delivery Overlay (~2.5s) -->
+        <div id="mailbox-anim-overlay" class="stage-overlay hidden">
+          <canvas id="mailbox-anim-canvas" width="240" height="150"></canvas>
+          <div id="mailbox-status-text" class="mailbox-caption">Sealing Poké-Card...</div>
+        </div>
+
+        <!-- 2. Share & Play Overlay (After Mailbox Animation or via Share Gift button) -->
+        <div id="gift-sent-modal" class="stage-overlay hidden">
+          <div class="overlay-card emerald-border">
+            <div class="pill-tag">📮 DELIVERED TO MAILBOX!</div>
+            <h2 class="overlay-title">Your Pokémon Holiday Gift is Ready!</h2>
+            <p class="overlay-desc">
+              Text or email this link to <strong id="sent-recipient-name" style="color:#fff;">Alex</strong>, or preview the snowy adventure right now!
+            </p>
+
+            <div class="link-box">
+              <label for="sent-gift-url">Shareable Gift Link (Click to Copy):</label>
+              <div class="link-row">
+                <input id="sent-gift-url" type="text" readonly class="link-input" />
+                <button id="btn-sent-copy" type="button" class="btn btn-sky">🔗 Copy Link</button>
+              </div>
+              <div id="sent-copy-msg" class="hidden" style="color:#34d399; font-size:11px; margin-top:5px; font-weight:700;">
+                ✓ Copied! Ready to paste anywhere!
+              </div>
+            </div>
+
+            <div class="btn-row" style="margin-bottom:8px;">
+              <button id="btn-sent-sms" type="button" class="btn btn-emerald">💬 Text to Friend</button>
+              <button id="btn-sent-email" type="button" class="btn btn-rose">📧 Email to Friend</button>
+            </div>
+            <div class="btn-row">
+              <button id="btn-sent-native-share" type="button" class="btn btn-amber">📲 More Share Options</button>
+              <button id="btn-enter-game-preview" type="button" class="btn btn-slate">🎮 Enter Game Preview</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Recipient Welcome Overlay (When opened via #gift= or ?gift= link) -->
+        <div id="recipient-welcome-modal" class="stage-overlay hidden">
+          <div class="overlay-card">
+            <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px;">
+              <span style="font-size:24px;">🎁</span>
+              <canvas id="welcome-poke-preview" width="48" height="48" style="width:48px; height:48px; border-radius:10px; border:2px solid #fbbf24; background:#0c4a6e;"></canvas>
+              <span style="font-size:24px;">🎄</span>
+            </div>
+            <div class="pill-tag">DELIVERY FROM <span id="welcome-sender">SAM</span></div>
+            <h2 class="overlay-title">
+              A Snowy Pokémon Holiday Gift for <span id="welcome-recipient" style="color:#fda4af;">Alex</span>!
+            </h2>
+            <p class="overlay-desc">
+              Walk north through Frostleaf Town to meet <strong id="welcome-sender-inline" style="color:#fde68a;">Sam</strong> by the Christmas Tree and unwrap your holiday card!
+            </p>
+            <div class="btn-row">
+              <button id="btn-welcome-play" type="button" class="btn btn-emerald">▶ Open Adventure</button>
+              <button id="btn-welcome-read-card" type="button" class="btn btn-rose">📖 Read Card Directly</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Unwrapped Holiday Greeting Card -->
+        <div id="present-modal" class="stage-overlay hidden">
+          <div class="holiday-paper">
+            <div class="paper-header">
+              <span>🎄 HOLIDAY GREETING CARD</span>
+              <span>🎁</span>
+            </div>
+            <p class="paper-salutation">Dear <span id="card-recipient">Alex</span>,</p>
+            <div id="card-message" class="paper-message">Merry Christmas!</div>
+            <div class="paper-footer">
+              <div>
+                <div style="font-size:11px; color:#64748b;">With holiday cheer,</div>
+                <div id="card-sender" style="font-size:13px; font-weight:800; color:#047857;">Sam</div>
+              </div>
+              <button id="btn-close-card" type="button" class="btn btn-emerald">Keep Playing</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Retro Pokémon Dialog Box -->
+        <div id="dialog-container" class="dialog-wrap hidden">
+          <div id="dialog-box" class="pokeball-dialog">
+            <div class="dialog-header">
+              <span id="dialog-speaker" class="dialog-speaker">DELIBIRD</span>
+              <span class="dialog-hint">Tap / Space</span>
+            </div>
+            <p id="dialog-text" class="dialog-body"></p>
+            <div class="dialog-arrow">▼</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Handheld Console Controls Deck -->
+    <div class="controls-deck">
+      <!-- D-Pad -->
+      <div class="dpad-grid" role="group" aria-label="Directional Pad">
+        <div></div>
+        <button id="dpad-up" type="button" aria-label="Move Up" class="dpad-btn dpad-up">▲</button>
+        <div></div>
+
+        <button id="dpad-left" type="button" aria-label="Move Left" class="dpad-btn dpad-left">◀</button>
+        <div class="dpad-center"><div class="dpad-dot"></div></div>
+        <button id="dpad-right" type="button" aria-label="Move Right" class="dpad-btn dpad-right">▶</button>
+
+        <div></div>
+        <button id="dpad-down" type="button" aria-label="Move Down" class="dpad-btn dpad-down">▼</button>
+        <div></div>
+      </div>
+
+      <!-- Center Speaker Grill & Instructions -->
+      <div class="speaker-grill">
+        <div class="grill-slots">
+          <span class="grill-slot"></span>
+          <span class="grill-slot"></span>
+          <span class="grill-slot"></span>
+          <span class="grill-slot"></span>
+        </div>
+        <p class="controls-caption">ARROWS / WASD TO WALK</p>
+        <p class="controls-caption" style="color:#fde68a;">SPACE / A TO TALK • B FOR CARD</p>
+      </div>
+
+      <!-- A / B Action Buttons -->
+      <div class="ab-cluster">
+        <div class="ab-unit offset-b">
+          <button id="btn-b" type="button" class="round-btn btn-b-circle">B</button>
+          <span class="ab-label">CARD</span>
+        </div>
+        <div class="ab-unit offset-a">
+          <button id="btn-a" type="button" class="round-btn btn-a-circle">A</button>
+          <span class="ab-label">TALK</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       CREATE YOUR POKÉMON HOLIDAY GIFT STUDIO (OPENS ON INITIAL LOAD)
+       ========================================================================= -->
+  <div id="customize-modal" class="studio-backdrop hidden">
+    <div class="studio-modal">
+      <div class="studio-header">
+        <div>
+          <h2 class="studio-title">🎄 Create Your Pokémon Holiday Gift</h2>
+          <p class="studio-sub">Customize your trainers, pick a Pokémon, write your card, and send!</p>
+        </div>
+        <canvas id="preview-sprites-canvas" width="96" height="36" class="preview-box"></canvas>
+      </div>
+
+      <div class="studio-body">
+        <!-- Characters Row -->
+        <div class="two-col">
+          <!-- Player 1 (Recipient) -->
+          <div class="panel-box">
+            <label for="input-player-name" class="section-label label-sky">1. RECIPIENT (PLAYER 1)</label>
+            <input id="input-player-name" type="text" maxlength="18" value="" placeholder="e.g., Alex" class="gift-input" />
+            <input id="input-recipient-contact" type="text" value="" placeholder="XXXXXXXXXX (no +1) or friend@email.com" class="gift-input" style="margin-top:6px; font-size:12px;" />
+
+            <div class="swatch-row">
+              <div class="swatch-group">
+                <span class="swatch-caption">Hair</span>
+                <div id="player-hair-swatches" class="swatches"></div>
+              </div>
+              <div class="swatch-group">
+                <span class="swatch-caption">Coat</span>
+                <div id="player-coat-swatches" class="swatches"></div>
+              </div>
+              <div class="swatch-group">
+                <span class="swatch-caption">Hat</span>
+                <div id="player-hat-pills" class="hat-pills"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Player 2 (Sender at the Tree) -->
+          <div class="panel-box">
+            <label for="input-partner-name" class="section-label label-rose">2. YOUR NAME (AT THE TREE)</label>
+            <input id="input-partner-name" type="text" maxlength="18" value="" placeholder="e.g., Sam" class="gift-input" />
+            <div style="font-size:11px; color:#94a3b8; margin-top:7px;">Waiting by the Christmas Tree:</div>
+
+            <div class="swatch-row" style="margin-top:11px;">
+              <div class="swatch-group">
+                <span class="swatch-caption">Hair</span>
+                <div id="partner-hair-swatches" class="swatches"></div>
+              </div>
+              <div class="swatch-group">
+                <span class="swatch-caption">Coat</span>
+                <div id="partner-coat-swatches" class="swatches"></div>
+              </div>
+              <div class="swatch-group">
+                <span class="swatch-caption">Hat</span>
+                <div id="partner-hat-pills" class="hat-pills"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Partner Pokémon Selector -->
+        <div class="panel-box">
+          <span class="section-label label-amber">3. PARTNER POKÉMON</span>
+          <div id="pokemon-selector" class="pokemon-grid"></div>
+        </div>
+
+        <!-- Town Sign Joke & Holiday Card Message -->
+        <div class="panel-box" style="display:flex; flex-direction:column; gap:8px;">
+          <div>
+            <label for="input-sign-joke" class="section-label label-sky">4. WOODEN TOWN SIGN JOKE</label>
+            <input id="input-sign-joke" type="text" maxlength="120" value="" placeholder="e.g., Watch out for wild Snorlax!" class="gift-input" />
+          </div>
+          <div>
+            <label for="input-gift-letter" class="section-label label-emerald">5. HOLIDAY CARD MESSAGE</label>
+            <textarea id="input-gift-letter" rows="3" maxlength="360" placeholder="Write your holiday wish here..." class="gift-textarea"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="studio-footer">
+        <span class="footer-note">Gray hints are placeholders • Typed text is white</span>
+        <button id="btn-send-mailbox" type="button" class="btn btn-primary-send">
+          📮 SEND GIFT & ENTER
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. SANDBOX-SAFE WEB AUDIO CHIPTUNE ENGINE
+      // =========================================================================
+      class RetroAudio {
+        constructor() {
+          this.ctx = null;
+          this.bgmPlaying = false;
+          this.bgmTimer = null;
+          this.noteIdx = 0;
+          this.melody = [
+            329.63, 329.63, 329.63, 0,
+            329.63, 329.63, 329.63, 0,
+            329.63, 392.00, 261.63, 293.66,
+            329.63, 0, 0, 0,
+            349.23, 349.23, 349.23, 349.23,
+            349.23, 329.63, 329.63, 329.63,
+            329.63, 293.66, 293.66, 329.63,
+            293.66, 0, 392.00, 0
+          ];
+        }
+
+        ensureContext() {
+          try {
+            if (!this.ctx) {
+              const AudioCtx = window.AudioContext || window.webkitAudioContext;
+              if (AudioCtx) this.ctx = new AudioCtx();
+            }
+            if (this.ctx && this.ctx.state === 'suspended') {
+              this.ctx.resume().catch(function () {});
+            }
+          } catch (e) {}
+        }
+
+        playTone(freq, duration, type, gainVal) {
+          try {
+            this.ensureContext();
+            if (!this.ctx || !freq) return;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type || 'square';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(gainVal || 0.045, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + (duration || 0.12));
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + (duration || 0.12));
+          } catch (e) {}
+        }
+
+        playBlip() {
+          this.playTone(660, 0.06, 'square', 0.035);
+        }
+
+        playSelect() {
+          const self = this;
+          this.playTone(523.25, 0.08, 'triangle', 0.06);
+          setTimeout(function () { self.playTone(783.99, 0.13, 'triangle', 0.06); }, 75);
+        }
+
+        playFanfare() {
+          const self = this;
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          notes.forEach(function (n, i) {
+            setTimeout(function () { self.playTone(n, 0.17, 'triangle', 0.07); }, i * 105);
+          });
+        }
+
+        toggleBGM() {
+          const self = this;
+          this.ensureContext();
+          this.bgmPlaying = !this.bgmPlaying;
+          if (this.bgmPlaying) {
+            this.noteIdx = 0;
+            this.bgmTimer = setInterval(function () {
+              if (!self.bgmPlaying) return;
+              const freq = self.melody[self.noteIdx % self.melody.length];
+              if (freq > 0) self.playTone(freq, 0.17, 'triangle', 0.03);
+              self.noteIdx++;
+            }, 240);
+          } else if (this.bgmTimer) {
+            clearInterval(this.bgmTimer);
+            this.bgmTimer = null;
+          }
+          return this.bgmPlaying;
+        }
+      }
+
+      const audio = new RetroAudio();
+
+      // =========================================================================
+      // 2. POKÉMON ROSTER, CUSTOMIZATION OPTIONS & STATE
+      // =========================================================================
+      const HAIR_COLORS = ['#4a2e1b', '#1e1b18', '#eab308', '#b91c1c', '#ec4899', '#38bdf8'];
+      const COAT_COLORS = ['#e11d48', '#0284c7', '#059669', '#7c3aed', '#f59e0b'];
+      const HAT_STYLES = [
+        { id: 'santa', label: 'Santa' },
+        { id: 'beanie', label: 'Beanie' },
+        { id: 'cap', label: 'Cap' }
+      ];
+
+      const POKEMON_LIST = [
+        {
+          id: 'pikachu',
+          name: 'Pikachu',
+          cry: 'Pika-pi! ⚡',
+          wish: 'Pikachu sparks with festive cheer and wishes you a warm, electric Christmas!'
+        },
+        {
+          id: 'eevee',
+          name: 'Eevee',
+          cry: 'Vee-vee! ✨',
+          wish: 'Eevee wags its fluffy tail in the snow and hopes your New Year evolves into pure joy!'
+        },
+        {
+          id: 'piplup',
+          name: 'Piplup',
+          cry: 'Pip-lup! ❄️',
+          wish: 'Piplup puffs out its chest proudly—nothing beats celebrating the holidays with a top Trainer!'
+        },
+        {
+          id: 'delibird',
+          name: 'Delibird',
+          cry: 'Deli-deli! 🎁',
+          wish: 'Delibird delivered an extra-large sack of holiday happiness right to Frostleaf Town!'
+        },
+        {
+          id: 'shaymin',
+          name: 'Shaymin',
+          cry: 'Shay-min! 🌸',
+          wish: 'Shaymin’s Gracidea flower blooms even in winter to say thank you for being so wonderful!'
+        },
+        {
+          id: 'vulpix',
+          name: 'A. Vulpix',
+          cry: 'Vul-pix! 🌨️',
+          wish: 'Alolan Vulpix exhales a sparkling flurry of diamond dust to celebrate Christmas with you!'
+        }
+      ];
+
+      const DEFAULT_FALLBACKS = {
+        playerName: 'Alex',
+        partnerName: 'Sam',
+        signJoke: 'Watch out for wild Snorlax napping near the hot cocoa stand!',
+        giftLetter: 'Merry Christmas! Wishing you a cozy, joyful holiday full of snowy adventures and happy memories! ❤️🎄'
+      };
+
+      const state = {
+        playerName: '',
+        recipientContact: '',
+        playerHair: '#4a2e1b',
+        playerCoat: '#e11d48',
+        playerHat: 'santa',
+        partnerName: '',
+        partnerHair: '#1e1b18',
+        partnerCoat: '#059669',
+        partnerHat: 'santa',
+        pokemonId: 'pikachu',
+        signJoke: '',
+        giftLetter: '',
+        hasBerry: false,
+        presentOpened: false
+      };
+
+      function getEffectivePlayerName() {
+        return (state.playerName || '').trim() || DEFAULT_FALLBACKS.playerName;
+      }
+      function getEffectivePartnerName() {
+        return (state.partnerName || '').trim() || DEFAULT_FALLBACKS.partnerName;
+      }
+      function getEffectiveSignJoke() {
+        return (state.signJoke || '').trim() || DEFAULT_FALLBACKS.signJoke;
+      }
+      function getEffectiveGiftLetter() {
+        return (state.giftLetter || '').trim() || DEFAULT_FALLBACKS.giftLetter;
+      }
+
+      // Smartly detect whether the user entered an email address or a 10-digit US phone number (no +1)
+      function parseRecipientContact(raw) {
+        const cleaned = (raw || '').trim();
+        if (!cleaned) return { email: '', phone: '' };
+        if (cleaned.indexOf('@') !== -1) {
+          return { email: cleaned, phone: '' };
+        }
+        let digits = cleaned.replace(/\D/g, '');
+        if (digits.length === 11 && digits.charAt(0) === '1') {
+          digits = digits.slice(1);
+        }
+        if (digits.length >= 7) {
+          return { email: '', phone: digits };
+        }
+        return { email: '', phone: '' };
+      }
+
+      // =========================================================================
+      // 3. SANDBOX-SAFE URL ENCODING / DECODING (#gift= or ?gift=)
+      // =========================================================================
+      function getGiftPayloadFromURL() {
+        try {
+          const search = window.location.search || '';
+          const params = new URLSearchParams(search);
+          if (params.get('gift')) return params.get('gift');
+        } catch (e) {}
+        try {
+          const hash = window.location.hash || '';
+          if (hash.indexOf('#gift=') === 0) return hash.slice(6);
+        } catch (e) {}
+        return null;
+      }
+
+      function loadStateFromURL() {
+        try {
+          const encoded = getGiftPayloadFromURL();
+          if (encoded) {
+            const decoded = JSON.parse(decodeURIComponent(atob(encoded)));
+            if (decoded && typeof decoded === 'object') {
+              Object.assign(state, decoded);
+              return true;
+            }
+          }
+        } catch (e) {}
+        return false;
+      }
+
+      function encodeStateToURL() {
+        const payload = {
+          playerName: getEffectivePlayerName(),
+          playerHair: state.playerHair,
+          playerCoat: state.playerCoat,
+          playerHat: state.playerHat,
+          partnerName: getEffectivePartnerName(),
+          partnerHair: state.partnerHair,
+          partnerCoat: state.partnerCoat,
+          partnerHat: state.partnerHat,
+          pokemonId: state.pokemonId,
+          signJoke: getEffectiveSignJoke(),
+          giftLetter: getEffectiveGiftLetter()
+        };
+        const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
+        try {
+          const baseUrl = window.location.href.split('?')[0].split('#')[0];
+          return baseUrl + '#gift=' + encoded;
+        } catch (e) {
+          return '#gift=' + encoded;
+        }
+      }
+
+      function safeCopyToClipboard(text) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(function () {});
+          }
+        } catch (e) {}
+        try {
+          const temp = document.createElement('input');
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand('copy');
+          document.body.removeChild(temp);
+        } catch (e) {}
+      }
+
+      const isSharedGiftLink = loadStateFromURL();
+
+      // =========================================================================
+      // 4. PROCEDURAL PIXEL-ART SPRITE RENDERER (16x16 GRID)
+      // =========================================================================
+      function drawTrainerSprite(ctx, x, y, opts, frame) {
+        const bob = frame % 2 === 1 ? -1 : 0;
+        const skin = '#fed7aa';
+
+        // Shadow
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+        ctx.fillRect(x + 3, y + 14, 10, 2);
+
+        // Boots
+        ctx.fillStyle = '#1e293b';
+        if (frame % 2 === 1) {
+          ctx.fillRect(x + 4, y + 12, 3, 3);
+          ctx.fillRect(x + 9, y + 13, 3, 2);
+        } else {
+          ctx.fillRect(x + 4, y + 13, 3, 2);
+          ctx.fillRect(x + 9, y + 12, 3, 3);
+        }
+
+        // Winter Coat
+        ctx.fillStyle = opts.coat || '#e11d48';
+        ctx.fillRect(x + 4, y + 8 + bob, 8, 5);
+        // White Scarf
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x + 4, y + 8 + bob, 8, 1);
+        ctx.fillRect(x + 9, y + 9 + bob, 2, 3);
+
+        // Head & Hair
+        ctx.fillStyle = skin;
+        ctx.fillRect(x + 4, y + 3 + bob, 8, 5);
+        ctx.fillStyle = opts.hair || '#4a2e1b';
+        ctx.fillRect(x + 3, y + 3 + bob, 2, 4);
+        ctx.fillRect(x + 11, y + 3 + bob, 2, 4);
+
+        // Eyes
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(x + 5, y + 5 + bob, 1, 2);
+        ctx.fillRect(x + 10, y + 5 + bob, 1, 2);
+
+        // Hat
+        if (opts.hat === 'santa') {
+          ctx.fillStyle = '#dc2626';
+          ctx.fillRect(x + 4, y + 0 + bob, 8, 3);
+          ctx.fillRect(x + 11, y + 1 + bob, 3, 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x + 3, y + 2 + bob, 10, 1);
+          ctx.fillRect(x + 13, y + 2 + bob, 2, 2);
+        } else if (opts.hat === 'beanie') {
+          ctx.fillStyle = '#0284c7';
+          ctx.fillRect(x + 4, y + 1 + bob, 8, 2);
+          ctx.fillStyle = '#fde047';
+          ctx.fillRect(x + 7, y + 0 + bob, 2, 1);
+        } else {
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(x + 4, y + 1 + bob, 8, 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x + 6, y + 1 + bob, 4, 1);
+        }
+      }
+
+      function drawPokemonSprite(ctx, id, x, y, frame) {
+        const bob = frame % 2 === 1 ? -1 : 0;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+        ctx.fillRect(x + 3, y + 14, 10, 2);
+
+        if (id === 'pikachu') {
+          ctx.fillStyle = '#facc15';
+          ctx.fillRect(x + 4, y + 5 + bob, 8, 8);
+          // Ears
+          ctx.fillRect(x + 3, y + 1 + bob, 2, 4);
+          ctx.fillRect(x + 11, y + 1 + bob, 2, 4);
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(x + 3, y + 1 + bob, 2, 1);
+          ctx.fillRect(x + 11, y + 1 + bob, 2, 1);
+          // Eyes & Red Cheeks
+          ctx.fillRect(x + 5, y + 7 + bob, 1, 1);
+          ctx.fillRect(x + 10, y + 7 + bob, 1, 1);
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(x + 4, y + 9 + bob, 2, 2);
+          ctx.fillRect(x + 10, y + 9 + bob, 2, 2);
+          // Tail
+          ctx.fillStyle = '#eab308';
+          ctx.fillRect(x + 12, y + 7 + bob, 3, 2);
+          ctx.fillRect(x + 13, y + 5 + bob, 2, 2);
+        } else if (id === 'eevee') {
+          ctx.fillStyle = '#b45309';
+          ctx.fillRect(x + 4, y + 6 + bob, 8, 7);
+          // Ears
+          ctx.fillRect(x + 3, y + 1 + bob, 2, 5);
+          ctx.fillRect(x + 11, y + 1 + bob, 2, 5);
+          // Fluffy Cream Collar
+          ctx.fillStyle = '#fef3c7';
+          ctx.fillRect(x + 3, y + 9 + bob, 10, 3);
+          ctx.fillRect(x + 12, y + 7 + bob, 3, 4);
+          // Eyes
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(x + 5, y + 7 + bob, 1, 1);
+          ctx.fillRect(x + 10, y + 7 + bob, 1, 1);
+        } else if (id === 'piplup') {
+          ctx.fillStyle = '#0284c7';
+          ctx.fillRect(x + 4, y + 4 + bob, 8, 9);
+          ctx.fillStyle = '#e0f2fe';
+          ctx.fillRect(x + 5, y + 6 + bob, 6, 6);
+          ctx.fillStyle = '#facc15';
+          ctx.fillRect(x + 7, y + 7 + bob, 2, 2);
+          ctx.fillRect(x + 5, y + 13 + bob, 2, 1);
+          ctx.fillRect(x + 9, y + 13 + bob, 2, 1);
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(x + 5, y + 6 + bob, 1, 1);
+          ctx.fillRect(x + 10, y + 6 + bob, 1, 1);
+        } else if (id === 'delibird') {
+          ctx.fillStyle = '#dc2626';
+          ctx.fillRect(x + 4, y + 4 + bob, 8, 9);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x + 5, y + 5 + bob, 6, 6);
+          // Sack
+          ctx.fillStyle = '#fef3c7';
+          ctx.fillRect(x + 11, y + 6 + bob, 4, 6);
+          // Beak & Eyes
+          ctx.fillStyle = '#facc15';
+          ctx.fillRect(x + 7, y + 7 + bob, 2, 2);
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(x + 5, y + 6 + bob, 1, 1);
+          ctx.fillRect(x + 10, y + 6 + bob, 1, 1);
+        } else if (id === 'shaymin') {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x + 3, y + 8 + bob, 10, 5);
+          ctx.fillStyle = '#22c55e';
+          ctx.fillRect(x + 3, y + 5 + bob, 10, 4);
+          // Pink Gracidea Flower
+          ctx.fillStyle = '#f472b6';
+          ctx.fillRect(x + 2, y + 6 + bob, 3, 3);
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(x + 6, y + 9 + bob, 1, 1);
+          ctx.fillRect(x + 10, y + 9 + bob, 1, 1);
+        } else {
+          // Alolan Vulpix
+          ctx.fillStyle = '#f8fafc';
+          ctx.fillRect(x + 4, y + 6 + bob, 8, 7);
+          ctx.fillStyle = '#bae6fd';
+          ctx.fillRect(x + 4, y + 3 + bob, 8, 3);
+          ctx.fillRect(x + 11, y + 6 + bob, 4, 5);
+          ctx.fillStyle = '#0284c7';
+          ctx.fillRect(x + 5, y + 7 + bob, 1, 1);
+          ctx.fillRect(x + 10, y + 7 + bob, 1, 1);
+        }
+      }
+
+      // =========================================================================
+      // 5. FROSTLEAF TOWN TILEMAP, ENTITIES & PLAYER MOVEMENT
+      // =========================================================================
+      const TILE_SIZE = 16;
+      const COLS = 16;
+      const ROWS = 14;
+
+      // 0 = Snow, 1 = Cobblestone Path, 2 = Pine Tree, 3 = Cabin Wall, 4 = Cabin Roof, 5 = Cabin Door
+      const TOWN_MAP = [
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        [2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 2],
+        [2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 2],
+        [2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 2],
+        [2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 2],
+        [2, 0, 4, 4, 4, 0, 0, 0, 1, 1, 0, 0, 4, 4, 4, 2],
+        [2, 0, 3, 5, 3, 0, 0, 0, 1, 1, 0, 0, 3, 5, 3, 2],
+        [2, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 2],
+        [2, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 2],
+        [2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 2],
+        [2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 2],
+        [2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 2],
+        [2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 2, 2],
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+      ];
+
+      const ENTITIES = {
+        tree: { col: 9, row: 2 },
+        partner: { col: 8, row: 3 },
+        pokemon: { col: 11, row: 3 },
+        giftBox: { col: 9, row: 4 },
+        delibird: { col: 5, row: 10 },
+        snowman: { col: 13, row: 8 },
+        sign: { col: 8, row: 11 },
+        mailbox: { col: 11, row: 11 }
+      };
+
+      const player = {
+        col: 9,
+        row: 11,
+        x: 9 * TILE_SIZE,
+        y: 11 * TILE_SIZE,
+        targetX: 9 * TILE_SIZE,
+        targetY: 11 * TILE_SIZE,
+        moving: false,
+        dir: 'up',
+        stepFrame: 0
+      };
+
+      const snowflakes = [];
+      for (let i = 0; i < 42; i++) {
+        snowflakes.push({
+          x: Math.random() * 256,
+          y: Math.random() * 192,
+          speedY: 0.25 + Math.random() * 0.45,
+          drift: Math.random() * Math.PI * 2,
+          size: Math.random() > 0.7 ? 2 : 1
+        });
+      }
+
+      function isWalkable(c, r) {
+        if (c < 1 || c >= COLS - 1 || r < 1 || r >= ROWS - 1) return false;
+        const tile = TOWN_MAP[r][c];
+        if (tile === 2 || tile === 3 || tile === 4 || tile === 5) return false;
+
+        // North Christmas Tree Plaza blockers
+        if ((c === 9 || c === 10) && (r === 2 || r === 3)) return false;
+        if (c === ENTITIES.partner.col && r === ENTITIES.partner.row) return false;
+        if (c === ENTITIES.pokemon.col && r === ENTITIES.pokemon.row) return false;
+        if (c === ENTITIES.giftBox.col && r === ENTITIES.giftBox.row) return false;
+        if (c === ENTITIES.delibird.col && r === ENTITIES.delibird.row) return false;
+        if (c === ENTITIES.snowman.col && r === ENTITIES.snowman.row) return false;
+        if (c === ENTITIES.sign.col && r === ENTITIES.sign.row) return false;
+        if (c === ENTITIES.mailbox.col && r === ENTITIES.mailbox.row) return false;
+
+        return true;
+      }
+
+      function getAdjacentInteractable() {
+        const offsets = [
+          { dc: 0, dr: 0 },
+          { dc: 0, dr: -1 },
+          { dc: 0, dr: 1 },
+          { dc: -1, dr: 0 },
+          { dc: 1, dr: 0 }
+        ];
+        for (let i = 0; i < offsets.length; i++) {
+          const c = player.col + offsets[i].dc;
+          const r = player.row + offsets[i].dr;
+          if (
+            (c === ENTITIES.partner.col && r === ENTITIES.partner.row) ||
+            (c === ENTITIES.pokemon.col && r === ENTITIES.pokemon.row) ||
+            (c === ENTITIES.giftBox.col && r === ENTITIES.giftBox.row) ||
+            ((c === 9 || c === 10) && (r === 2 || r === 3))
+          ) {
+            return 'treeCelebration';
+          }
+          if (c === ENTITIES.delibird.col && r === ENTITIES.delibird.row) return 'delibird';
+          if (c === ENTITIES.snowman.col && r === ENTITIES.snowman.row) return 'snowman';
+          if (c === ENTITIES.sign.col && r === ENTITIES.sign.row) return 'sign';
+          if (c === ENTITIES.mailbox.col && r === ENTITIES.mailbox.row) return 'mailbox';
+          if (TOWN_MAP[r] && TOWN_MAP[r][c] === 5) return 'cabinDoor';
+        }
+        return null;
+      }
+
+      // =========================================================================
+      // 6. CLASSIC POKÉMON DIALOG & GREETING CARD SYSTEM
+      // =========================================================================
+      const dialogUI = {
+        active: false,
+        pages: [],
+        pageIndex: 0,
+        charIndex: 0,
+        timer: null,
+        onFinish: null
+      };
+
+      function startDialog(pages, onFinish) {
+        dialogUI.active = true;
+        dialogUI.pages = pages;
+        dialogUI.pageIndex = 0;
+        dialogUI.onFinish = onFinish || null;
+        document.getElementById('dialog-container').classList.remove('hidden');
+        renderDialogPage();
+      }
+
+      function renderDialogPage() {
+        if (dialogUI.timer) clearInterval(dialogUI.timer);
+        const page = dialogUI.pages[dialogUI.pageIndex];
+        document.getElementById('dialog-speaker').textContent = page.speaker;
+        const textEl = document.getElementById('dialog-text');
+        textEl.textContent = '';
+        dialogUI.charIndex = 0;
+
+        dialogUI.timer = setInterval(function () {
+          if (dialogUI.charIndex < page.text.length) {
+            textEl.textContent += page.text.charAt(dialogUI.charIndex);
+            dialogUI.charIndex++;
+          } else {
+            clearInterval(dialogUI.timer);
+            dialogUI.timer = null;
+          }
+        }, 18);
+      }
+
+      function advanceDialog() {
+        if (!dialogUI.active) return;
+        const page = dialogUI.pages[dialogUI.pageIndex];
+        if (dialogUI.charIndex < page.text.length) {
+          if (dialogUI.timer) clearInterval(dialogUI.timer);
+          dialogUI.timer = null;
+          document.getElementById('dialog-text').textContent = page.text;
+          dialogUI.charIndex = page.text.length;
+          return;
+        }
+        audio.playBlip();
+        dialogUI.pageIndex++;
+        if (dialogUI.pageIndex < dialogUI.pages.length) {
+          renderDialogPage();
+        } else {
+          dialogUI.active = false;
+          document.getElementById('dialog-container').classList.add('hidden');
+          if (dialogUI.onFinish) {
+            const cb = dialogUI.onFinish;
+            dialogUI.onFinish = null;
+            cb();
+          }
+        }
+      }
+
+      function openPresentCard() {
+        document.getElementById('card-recipient').textContent = getEffectivePlayerName();
+        document.getElementById('card-message').textContent = getEffectiveGiftLetter();
+        document.getElementById('card-sender').textContent = getEffectivePartnerName();
+        document.getElementById('present-modal').classList.remove('hidden');
+        audio.playSelect();
+      }
+
+      function triggerTreeCelebration() {
+        const poke = POKEMON_LIST.find(function (p) { return p.id === state.pokemonId; }) || POKEMON_LIST[0];
+        const pName = getEffectivePlayerName();
+        const senderName = getEffectivePartnerName();
+        state.presentOpened = true;
+        document.getElementById('hud-quest').textContent = '✨ Merry Christmas! Card Unlocked!';
+        audio.playFanfare();
+
+        startDialog([
+          {
+            speaker: senderName.toUpperCase(),
+            text: 'Hey ' + pName + '! You made it through the snow! Welcome to our Christmas Tree in Frostleaf Town!'
+          },
+          {
+            speaker: poke.name.toUpperCase(),
+            text: poke.cry + ' ' + poke.wish
+          },
+          {
+            speaker: senderName.toUpperCase(),
+            text: 'I sealed a special holiday card for you under the tree. Go ahead and open it! 🎁'
+          }
+        ], function () {
+          openPresentCard();
+        });
+      }
+
+      function interact() {
+        if (dialogUI.active) {
+          advanceDialog();
+          return;
+        }
+        const target = getAdjacentInteractable();
+        if (!target) return;
+
+        const pName = getEffectivePlayerName();
+        const senderName = getEffectivePartnerName();
+
+        if (target === 'treeCelebration') {
+          triggerTreeCelebration();
+        } else if (target === 'delibird') {
+          if (!state.hasBerry) {
+            state.hasBerry = true;
+            document.getElementById('berry-badge').classList.remove('hidden');
+            audio.playSelect();
+            startDialog([
+              {
+                speaker: 'DELIBIRD',
+                text: 'Deli-deli! 🎁 Merry Christmas, ' + pName + '! Take this sweet Festive Berry for your walk north!'
+              },
+              {
+                speaker: 'SYSTEM',
+                text: pName + ' received a Festive Berry! 🍓'
+              }
+            ]);
+          } else {
+            startDialog([
+              {
+                speaker: 'DELIBIRD',
+                text: 'Deli-deli! ' + senderName + ' is waiting right up north by the glowing Christmas Tree!'
+              }
+            ]);
+          }
+        } else if (target === 'snowman') {
+          startDialog([
+            {
+              speaker: 'FROSTY SNOWMAN',
+              text: 'What do you call a snowman with a six-pack? ... An abdominal snowman! ⛄❄️'
+            }
+          ]);
+        } else if (target === 'sign') {
+          startDialog([
+            {
+              speaker: 'WOODEN SIGN',
+              text: getEffectiveSignJoke()
+            }
+          ]);
+        } else if (target === 'mailbox') {
+          startDialog([
+            {
+              speaker: 'FROSTLEAF MAILBOX',
+              text: 'Delibird Express Postbox: Special holiday delivery addressed to ' + pName + ' from ' + senderName + '! 📮'
+            }
+          ]);
+        } else if (target === 'cabinDoor') {
+          startDialog([
+            {
+              speaker: 'COZY CABIN',
+              text: 'Warm fireplace crackling inside! The aroma of fresh Poké Puffs and hot cocoa drifts under the door.'
+            }
+          ]);
+        }
+      }
+
+      // =========================================================================
+      // 7. INPUT HANDLING (KEYBOARD + HELD D-PAD + TOUCH)
+      // =========================================================================
+      const heldKeys = {};
+
+      function isAnyBlockingModalOpen() {
+        return (
+          !document.getElementById('customize-modal').classList.contains('hidden') ||
+          !document.getElementById('present-modal').classList.contains('hidden') ||
+          !document.getElementById('recipient-welcome-modal').classList.contains('hidden') ||
+          !document.getElementById('mailbox-anim-overlay').classList.contains('hidden') ||
+          !document.getElementById('gift-sent-modal').classList.contains('hidden')
+        );
+      }
+
+      function tryMove(dir) {
+        if (player.moving || dialogUI.active || isAnyBlockingModalOpen()) return;
+        player.dir = dir;
+        let nextCol = player.col;
+        let nextRow = player.row;
+        if (dir === 'up') nextRow--;
+        if (dir === 'down') nextRow++;
+        if (dir === 'left') nextCol--;
+        if (dir === 'right') nextCol++;
+
+        if (isWalkable(nextCol, nextRow)) {
+          player.col = nextCol;
+          player.row = nextRow;
+          player.targetX = nextCol * TILE_SIZE;
+          player.targetY = nextRow * TILE_SIZE;
+          player.moving = true;
+          player.stepFrame++;
+        }
+      }
+
+      window.addEventListener('keydown', function (e) {
+        if (isAnyBlockingModalOpen()) return;
+        const k = e.key.toLowerCase();
+        if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ', 'enter'].indexOf(k) !== -1) {
+          e.preventDefault();
+        }
+        heldKeys[k] = true;
+        if (k === ' ' || k === 'enter' || k === 'z') {
+          interact();
+        } else if (k === 'b' || k === 'x') {
+          if (!dialogUI.active) openPresentCard();
+        }
+      });
+
+      window.addEventListener('keyup', function (e) {
+        heldKeys[e.key.toLowerCase()] = false;
+      });
+
+      function bindDpadButton(btnId, dirKey) {
+        const el = document.getElementById(btnId);
+        const startHold = function (e) {
+          e.preventDefault();
+          heldKeys[dirKey] = true;
+          el.classList.add('pressed');
+          tryMove(dirKey);
+        };
+        const endHold = function (e) {
+          if (e) e.preventDefault();
+          heldKeys[dirKey] = false;
+          el.classList.remove('pressed');
+        };
+        el.addEventListener('mousedown', startHold);
+        el.addEventListener('mouseup', endHold);
+        el.addEventListener('mouseleave', endHold);
+        el.addEventListener('touchstart', startHold, { passive: false });
+        el.addEventListener('touchend', endHold, { passive: false });
+      }
+
+      bindDpadButton('dpad-up', 'up');
+      bindDpadButton('dpad-down', 'down');
+      bindDpadButton('dpad-left', 'left');
+      bindDpadButton('dpad-right', 'right');
+
+      document.getElementById('btn-a').addEventListener('click', interact);
+      document.getElementById('btn-b').addEventListener('click', function () {
+        if (!dialogUI.active) openPresentCard();
+      });
+      document.getElementById('dialog-box').addEventListener('click', advanceDialog);
+      document.getElementById('btn-close-card').addEventListener('click', function () {
+        document.getElementById('present-modal').classList.add('hidden');
+        audio.playBlip();
+      });
+
+      // =========================================================================
+      // 8. MAIN GAME CANVAS LOOP (FROSTLEAF TOWN)
+      // =========================================================================
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+      let globalTick = 0;
+
+      function updateGame() {
+        globalTick++;
+
+        // Snowfall update
+        for (let i = 0; i < snowflakes.length; i++) {
+          const s = snowflakes[i];
+          s.y += s.speedY;
+          s.x += Math.sin(globalTick * 0.02 + s.drift) * 0.2;
+          if (s.y > 192) { s.y = -2; s.x = Math.random() * 256; }
+          if (s.x > 256) s.x = 0;
+          if (s.x < 0) s.x = 256;
+        }
+
+        // Smooth grid movement
+        if (player.moving) {
+          const speed = 1.6;
+          const dx = player.targetX - player.x;
+          const dy = player.targetY - player.y;
+          if (Math.abs(dx) <= speed && Math.abs(dy) <= speed) {
+            player.x = player.targetX;
+            player.y = player.targetY;
+            player.moving = false;
+            if ((player.col === 9 || player.col === 10) && player.row === 5 && !state.presentOpened) {
+              triggerTreeCelebration();
+            }
+          } else {
+            if (dx > 0) player.x += speed;
+            if (dx < 0) player.x -= speed;
+            if (dy > 0) player.y += speed;
+            if (dy < 0) player.y -= speed;
+          }
+        } else {
+          if (heldKeys['arrowup'] || heldKeys['w'] || heldKeys['up']) tryMove('up');
+          else if (heldKeys['arrowdown'] || heldKeys['s'] || heldKeys['down']) tryMove('down');
+          else if (heldKeys['arrowleft'] || heldKeys['a'] || heldKeys['left']) tryMove('left');
+          else if (heldKeys['arrowright'] || heldKeys['d'] || heldKeys['right']) tryMove('right');
+        }
+
+        // Interact prompt badge
+        const adj = getAdjacentInteractable();
+        const hintEl = document.getElementById('interact-hint');
+        if (adj && !dialogUI.active && !isAnyBlockingModalOpen()) {
+          hintEl.classList.remove('hidden');
+        } else {
+          hintEl.classList.add('hidden');
+        }
+      }
+
+      function drawTownMap() {
+        ctx.imageSmoothingEnabled = false;
+        const camY = Math.max(0, Math.min(ROWS * TILE_SIZE - 192, player.y - 96));
+
+        ctx.save();
+        ctx.translate(0, -Math.floor(camY));
+
+        // 1. Tiles
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const tx = c * TILE_SIZE;
+            const ty = r * TILE_SIZE;
+            const tile = TOWN_MAP[r][c];
+
+            // Base Snow
+            ctx.fillStyle = '#e0f2fe';
+            ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+            ctx.fillStyle = '#bae6fd';
+            ctx.fillRect(tx + 2, ty + 11, 3, 2);
+            ctx.fillRect(tx + 10, ty + 4, 2, 2);
+
+            if (tile === 1) {
+              // Cobblestone Path
+              ctx.fillStyle = '#cbd5e1';
+              ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+              ctx.fillStyle = '#94a3b8';
+              ctx.fillRect(tx + 2, ty + 2, 5, 4);
+              ctx.fillRect(tx + 9, ty + 3, 5, 4);
+              ctx.fillRect(tx + 3, ty + 9, 6, 4);
+              ctx.fillRect(tx + 11, ty + 9, 4, 4);
+            } else if (tile === 2) {
+              // Snowy Pine Tree
+              ctx.fillStyle = '#78350f';
+              ctx.fillRect(tx + 6, ty + 12, 4, 4);
+              ctx.fillStyle = '#15803d';
+              ctx.fillRect(tx + 2, ty + 8, 12, 4);
+              ctx.fillRect(tx + 4, ty + 4, 8, 4);
+              ctx.fillRect(tx + 6, ty + 1, 4, 3);
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(tx + 6, ty + 1, 4, 1);
+              ctx.fillRect(tx + 4, ty + 5, 3, 1);
+              ctx.fillRect(tx + 9, ty + 9, 3, 1);
+            } else if (tile === 3) {
+              // Cabin Wall
+              ctx.fillStyle = '#92400e';
+              ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+              ctx.fillStyle = '#fef08a';
+              ctx.fillRect(tx + 4, ty + 4, 8, 6);
+              ctx.fillStyle = '#78350f';
+              ctx.fillRect(tx + 7, ty + 4, 2, 6);
+            } else if (tile === 4) {
+              // Snowy Cabin Roof
+              ctx.fillStyle = '#b91c1c';
+              ctx.fillRect(tx, ty + 2, TILE_SIZE, TILE_SIZE - 2);
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(tx, ty, TILE_SIZE, 5);
+            } else if (tile === 5) {
+              // Cabin Door
+              ctx.fillStyle = '#78350f';
+              ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+              ctx.fillStyle = '#451a03';
+              ctx.fillRect(tx + 4, ty + 3, 8, 13);
+              ctx.fillStyle = '#fbbf24';
+              ctx.fillRect(tx + 10, ty + 9, 1, 2);
+            }
+          }
+        }
+
+        // 2. Giant Twinkling Christmas Tree (North Plaza)
+        const treeX = ENTITIES.tree.col * TILE_SIZE;
+        const treeY = ENTITIES.tree.row * TILE_SIZE;
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(treeX + 12, treeY + 25, 8, 7);
+        ctx.fillStyle = '#166534';
+        ctx.fillRect(treeX + 2, treeY + 18, 28, 7);
+        ctx.fillStyle = '#15803d';
+        ctx.fillRect(treeX + 5, treeY + 11, 22, 7);
+        ctx.fillStyle = '#16a34a';
+        ctx.fillRect(treeX + 9, treeY + 4, 14, 7);
+        // Star
+        ctx.fillStyle = Math.floor(globalTick / 15) % 2 === 0 ? '#fde047' : '#f59e0b';
+        ctx.fillRect(treeX + 14, treeY, 4, 4);
+        // Ornaments
+        const blink = Math.floor(globalTick / 20) % 2 === 0;
+        ctx.fillStyle = blink ? '#ef4444' : '#38bdf8';
+        ctx.fillRect(treeX + 8, treeY + 20, 2, 2);
+        ctx.fillRect(treeX + 19, treeY + 13, 2, 2);
+        ctx.fillStyle = blink ? '#fde047' : '#f472b6';
+        ctx.fillRect(treeX + 21, treeY + 21, 2, 2);
+        ctx.fillRect(treeX + 11, treeY + 8, 2, 2);
+
+        // 3. Wrapped Gift Box under the Tree
+        const gx = ENTITIES.giftBox.col * TILE_SIZE;
+        const gy = ENTITIES.giftBox.row * TILE_SIZE;
+        ctx.fillStyle = '#e11d48';
+        ctx.fillRect(gx + 3, gy + 5, 10, 9);
+        ctx.fillStyle = '#facc15';
+        ctx.fillRect(gx + 7, gy + 5, 2, 9);
+        ctx.fillRect(gx + 3, gy + 8, 10, 2);
+        ctx.fillRect(gx + 5, gy + 3, 6, 2);
+
+        // 4. Wooden Sign
+        const sx = ENTITIES.sign.col * TILE_SIZE;
+        const sy = ENTITIES.sign.row * TILE_SIZE;
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(sx + 7, sy + 9, 2, 6);
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(sx + 2, sy + 3, 12, 7);
+        ctx.fillStyle = '#fef3c7';
+        ctx.fillRect(sx + 4, sy + 5, 8, 1);
+        ctx.fillRect(sx + 4, sy + 7, 6, 1);
+
+        // 5. Frostleaf Town Mailbox
+        const mbx = ENTITIES.mailbox.col * TILE_SIZE;
+        const mby = ENTITIES.mailbox.row * TILE_SIZE;
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(mbx + 7, mby + 9, 2, 6);
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(mbx + 4, mby + 3, 8, 6);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(mbx + 4, mby + 2, 8, 2);
+        ctx.fillStyle = '#facc15';
+        ctx.fillRect(mbx + 11, mby + 4, 2, 3);
+
+        // 6. Frosty Snowman
+        const smx = ENTITIES.snowman.col * TILE_SIZE;
+        const smy = ENTITIES.snowman.row * TILE_SIZE;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(smx + 4, smy + 8, 8, 7);
+        ctx.fillRect(smx + 5, smy + 3, 6, 5);
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(smx + 4, smy + 8, 8, 1);
+        ctx.fillStyle = '#f97316';
+        ctx.fillRect(smx + 8, smy + 5, 3, 1);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(smx + 6, smy + 4, 1, 1);
+        ctx.fillRect(smx + 9, smy + 4, 1, 1);
+
+        // 7. NPCs & Characters
+        const animFrame = Math.floor(globalTick / 22) % 2;
+        drawPokemonSprite(ctx, 'delibird', ENTITIES.delibird.col * TILE_SIZE, ENTITIES.delibird.row * TILE_SIZE, animFrame);
+        drawTrainerSprite(ctx, ENTITIES.partner.col * TILE_SIZE, ENTITIES.partner.row * TILE_SIZE, {
+          hair: state.partnerHair,
+          coat: state.partnerCoat,
+          hat: state.partnerHat
+        }, animFrame);
+        drawPokemonSprite(ctx, state.pokemonId, ENTITIES.pokemon.col * TILE_SIZE, ENTITIES.pokemon.row * TILE_SIZE, animFrame);
+
+        // Player 1
+        drawTrainerSprite(ctx, Math.floor(player.x), Math.floor(player.y), {
+          hair: state.playerHair,
+          coat: state.playerCoat,
+          hat: state.playerHat
+        }, player.moving ? player.stepFrame : 0);
+
+        ctx.restore();
+
+        // 8. Falling Snowflakes
+        ctx.fillStyle = '#ffffff';
+        for (let i = 0; i < snowflakes.length; i++) {
+          const s = snowflakes[i];
+          ctx.fillRect(Math.floor(s.x), Math.floor(s.y), s.size, s.size);
+        }
+      }
+
+      function gameLoop() {
+        updateGame();
+        drawTownMap();
+        requestAnimationFrame(gameLoop);
+      }
+
+      // =========================================================================
+      // 9. GIFT STUDIO UI (SWATCHES, POKÉMON CARDS, PREVIEW & MAILBOX SEQUENCE)
+      // =========================================================================
+      function renderColorSwatches(containerId, colors, stateKey) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        colors.forEach(function (hex) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'swatch-btn' + (state[stateKey] === hex ? ' active' : '');
+          btn.style.backgroundColor = hex;
+          btn.setAttribute('aria-label', hex);
+          btn.addEventListener('click', function () {
+            state[stateKey] = hex;
+            renderAllStudioSelectors();
+            updateLivePreview();
+            audio.playBlip();
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      function renderHatPills(containerId, stateKey) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        HAT_STYLES.forEach(function (h) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'hat-pill' + (state[stateKey] === h.id ? ' active' : '');
+          btn.textContent = h.label;
+          btn.addEventListener('click', function () {
+            state[stateKey] = h.id;
+            renderAllStudioSelectors();
+            updateLivePreview();
+            audio.playBlip();
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      function renderPokemonSelector() {
+        const grid = document.getElementById('pokemon-selector');
+        grid.innerHTML = '';
+        POKEMON_LIST.forEach(function (poke) {
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'poke-card' + (state.pokemonId === poke.id ? ' selected' : '');
+
+          const miniCanvas = document.createElement('canvas');
+          miniCanvas.width = 32;
+          miniCanvas.height = 32;
+          miniCanvas.style.width = '32px';
+          miniCanvas.style.height = '32px';
+          const mctx = miniCanvas.getContext('2d');
+          mctx.imageSmoothingEnabled = false;
+          mctx.save();
+          mctx.scale(2, 2);
+          drawPokemonSprite(mctx, poke.id, 0, 0, 0);
+          mctx.restore();
+
+          const label = document.createElement('span');
+          label.textContent = poke.name;
+
+          card.appendChild(miniCanvas);
+          card.appendChild(label);
+          card.addEventListener('click', function () {
+            state.pokemonId = poke.id;
+            renderPokemonSelector();
+            updateLivePreview();
+            audio.playBlip();
+          });
+          grid.appendChild(card);
+        });
+      }
+
+      function renderAllStudioSelectors() {
+        renderColorSwatches('player-hair-swatches', HAIR_COLORS, 'playerHair');
+        renderColorSwatches('player-coat-swatches', COAT_COLORS, 'playerCoat');
+        renderHatPills('player-hat-pills', 'playerHat');
+
+        renderColorSwatches('partner-hair-swatches', HAIR_COLORS, 'partnerHair');
+        renderColorSwatches('partner-coat-swatches', COAT_COLORS, 'partnerCoat');
+        renderHatPills('partner-hat-pills', 'partnerHat');
+      }
+
+      function syncInputsFromState() {
+        document.getElementById('input-player-name').value = state.playerName || '';
+        document.getElementById('input-recipient-contact').value = state.recipientContact || '';
+        document.getElementById('input-partner-name').value = state.partnerName || '';
+        document.getElementById('input-sign-joke').value = state.signJoke || '';
+        document.getElementById('input-gift-letter').value = state.giftLetter || '';
+      }
+
+      function syncStateFromInputs() {
+        state.playerName = document.getElementById('input-player-name').value;
+        state.recipientContact = document.getElementById('input-recipient-contact').value.trim();
+        state.partnerName = document.getElementById('input-partner-name').value;
+        state.signJoke = document.getElementById('input-sign-joke').value;
+        state.giftLetter = document.getElementById('input-gift-letter').value;
+      }
+
+      function updateLivePreview() {
+        syncStateFromInputs();
+        const pCanvas = document.getElementById('preview-sprites-canvas');
+        const pCtx = pCanvas.getContext('2d');
+        pCtx.imageSmoothingEnabled = false;
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+        pCtx.save();
+        pCtx.scale(2, 2);
+        drawTrainerSprite(pCtx, 2, 2, { hair: state.playerHair, coat: state.playerCoat, hat: state.playerHat }, 0);
+        drawTrainerSprite(pCtx, 17, 2, { hair: state.partnerHair, coat: state.partnerCoat, hat: state.partnerHat }, 0);
+        drawPokemonSprite(pCtx, state.pokemonId, 31, 2, 0);
+        pCtx.restore();
+      }
+
+      ['input-player-name', 'input-recipient-contact', 'input-partner-name', 'input-sign-joke', 'input-gift-letter'].forEach(function (id) {
+        document.getElementById(id).addEventListener('input', updateLivePreview);
+      });
+
+      // =========================================================================
+      // 10. ANIMATED MAILBOX SENDING SEQUENCE (~2.5 SECONDS)
+      // =========================================================================
+      function playMailboxAnimation(onComplete) {
+        const overlay = document.getElementById('mailbox-anim-overlay');
+        const mCanvas = document.getElementById('mailbox-anim-canvas');
+        const mCtx = mCanvas.getContext('2d');
+        const statusEl = document.getElementById('mailbox-status-text');
+
+        overlay.classList.remove('hidden');
+        mCtx.imageSmoothingEnabled = false;
+
+        const duration = 2500;
+        const startTime = performance.now();
+        let playedSealTone = false;
+        let playedDropTone = false;
+
+        audio.playBlip();
+
+        function renderMailboxFrame(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // Night Sky & Snowy Ground
+          mCtx.fillStyle = '#0f172a';
+          mCtx.fillRect(0, 0, 240, 150);
+
+          // Stars
+          mCtx.fillStyle = '#fef08a';
+          mCtx.fillRect(26, 18, 2, 2);
+          mCtx.fillRect(68, 30, 2, 2);
+          mCtx.fillRect(194, 20, 2, 2);
+          mCtx.fillRect(214, 42, 2, 2);
+
+          // Snow Hills
+          mCtx.fillStyle = '#cbd5e1';
+          mCtx.fillRect(0, 108, 240, 42);
+          mCtx.fillStyle = '#f8fafc';
+          mCtx.fillRect(0, 112, 240, 38);
+
+          // Pine Tree
+          mCtx.fillStyle = '#15803d';
+          mCtx.fillRect(20, 82, 20, 26);
+          mCtx.fillRect(24, 70, 12, 12);
+          mCtx.fillStyle = '#ffffff';
+          mCtx.fillRect(24, 70, 12, 3);
+
+          // Frostleaf Mailbox on Right
+          const mbX = 164;
+          const mbY = 76;
+          mCtx.fillStyle = '#78350f';
+          mCtx.fillRect(mbX + 14, mbY + 24, 6, 22);
+          mCtx.fillStyle = '#dc2626';
+          mCtx.fillRect(mbX, mbY + 4, 34, 20);
+          mCtx.fillStyle = '#ef4444';
+          mCtx.fillRect(mbX + 2, mbY + 2, 30, 4);
+          mCtx.fillStyle = '#ffffff';
+          mCtx.fillRect(mbX + 2, mbY, 30, 3);
+
+          // Flag flips up when delivered
+          const flagUp = progress > 0.72;
+          mCtx.fillStyle = '#facc15';
+          if (flagUp) {
+            mCtx.fillRect(mbX + 28, mbY - 10, 3, 14);
+            mCtx.fillRect(mbX + 31, mbY - 10, 6, 5);
+          } else {
+            mCtx.fillRect(mbX + 22, mbY + 11, 12, 3);
+          }
+
+          if (progress < 0.34) {
+            // Phase 1: Sealing Poké-Card Envelope with Poké Ball Stamp
+            statusEl.textContent = 'Sealing Poké-Card...';
+            const envX = 56;
+            const envY = 64 + Math.sin(elapsed * 0.012) * 2;
+            mCtx.fillStyle = '#fefce8';
+            mCtx.fillRect(envX, envY, 36, 24);
+            mCtx.strokeStyle = '#94a3b8';
+            mCtx.strokeRect(envX, envY, 36, 24);
+            // Poké Ball Wax Stamp
+            mCtx.fillStyle = '#ef4444';
+            mCtx.fillRect(envX + 14, envY + 8, 8, 4);
+            mCtx.fillStyle = '#ffffff';
+            mCtx.fillRect(envX + 14, envY + 12, 8, 4);
+            mCtx.fillStyle = '#0f172a';
+            mCtx.fillRect(envX + 14, envY + 11, 8, 2);
+
+            if (!playedSealTone && progress > 0.16) {
+              playedSealTone = true;
+              audio.playSelect();
+            }
+          } else if (progress < 0.74) {
+            // Phase 2: Delibird Express Flying Across Snowy Sky
+            statusEl.textContent = 'Delibird Express delivering...';
+            const t = (progress - 0.34) / 0.40;
+            const birdX = 46 + t * 104;
+            const birdY = 46 + Math.sin(t * Math.PI * 3) * 6;
+
+            mCtx.save();
+            mCtx.scale(2, 2);
+            drawPokemonSprite(mCtx, 'delibird', Math.floor(birdX / 2), Math.floor(birdY / 2), Math.floor(elapsed / 110) % 2);
+            mCtx.restore();
+
+            mCtx.fillStyle = '#fefce8';
+            mCtx.fillRect(birdX + 18, birdY + 18, 16, 11);
+            mCtx.fillStyle = '#ef4444';
+            mCtx.fillRect(birdX + 24, birdY + 21, 4, 4);
+          } else {
+            // Phase 3: Dropped into Mailbox + Sparkles
+            statusEl.textContent = 'Delivered to Mailbox! ✨';
+            if (!playedDropTone) {
+              playedDropTone = true;
+              audio.playFanfare();
+            }
+            for (let i = 0; i < 10; i++) {
+              const angle = (i / 10) * Math.PI * 2 + elapsed * 0.006;
+              const radius = 15 + ((progress - 0.74) / 0.26) * 18;
+              const sx = mbX + 17 + Math.cos(angle) * radius;
+              const sy = mbY + 10 + Math.sin(angle) * radius;
+              mCtx.fillStyle = i % 2 === 0 ? '#fef08a' : '#38bdf8';
+              mCtx.fillRect(Math.floor(sx), Math.floor(sy), 3, 3);
+            }
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(renderMailboxFrame);
+          } else {
+            overlay.classList.add('hidden');
+            if (onComplete) onComplete();
+          }
+        }
+
+        requestAnimationFrame(renderMailboxFrame);
+      }
+
+      function openShareModal() {
+        syncStateFromInputs();
+        const shareUrl = encodeStateToURL();
+        document.getElementById('sent-recipient-name').textContent = getEffectivePlayerName();
+        document.getElementById('sent-gift-url').value = shareUrl;
+        document.getElementById('customize-modal').classList.add('hidden');
+        document.getElementById('recipient-welcome-modal').classList.add('hidden');
+        document.getElementById('present-modal').classList.add('hidden');
+        document.getElementById('gift-sent-modal').classList.remove('hidden');
+      }
+
+      // Send Gift & Enter Button
+      document.getElementById('btn-send-mailbox').addEventListener('click', function () {
+        syncStateFromInputs();
+        document.getElementById('customize-modal').classList.add('hidden');
+
+        playMailboxAnimation(function () {
+          openShareModal();
+        });
+      });
+
+      // Share & Play Overlay Actions
+      function showCopyConfirmation(customText) {
+        const msg = document.getElementById('sent-copy-msg');
+        msg.textContent = customText || '✓ Copied! Ready to paste anywhere!';
+        msg.classList.remove('hidden');
+        setTimeout(function () { msg.classList.add('hidden'); }, 3500);
+      }
+
+      document.getElementById('btn-sent-copy').addEventListener('click', function () {
+        const urlInput = document.getElementById('sent-gift-url');
+        urlInput.select();
+        safeCopyToClipboard(urlInput.value);
+        showCopyConfirmation('✓ Copied! Ready to paste in a text or email!');
+        audio.playBlip();
+      });
+
+      // 💬 Text to Friend (SMS URI)
+      document.getElementById('btn-sent-sms').addEventListener('click', function () {
+        const shareUrl = document.getElementById('sent-gift-url').value;
+        const poke = POKEMON_LIST.find(function (p) { return p.id === state.pokemonId; }) || POKEMON_LIST[0];
+        const pName = getEffectivePlayerName();
+        const senderName = getEffectivePartnerName();
+        const contact = parseRecipientContact(state.recipientContact);
+
+        const smsBody = encodeURIComponent(
+          '🎄 Merry Christmas ' + pName + '! ' + senderName + ' & ' + poke.name +
+          ' sent you a playable snowy Pokémon holiday card! Open your gift here: ' + shareUrl
+        );
+
+        // Cross-platform iOS / Android / Desktop SMS link format
+        const smsUri = contact.phone
+          ? 'sms:' + contact.phone + '?&body=' + smsBody
+          : 'sms:?&body=' + smsBody;
+
+        safeCopyToClipboard(shareUrl);
+        showCopyConfirmation('✓ Opening Messages (link also copied to clipboard!)');
+        audio.playSelect();
+
+        try {
+          window.location.href = smsUri;
+        } catch (e) {}
+      });
+
+      // 📧 Email to Friend (mailto: URI)
+      document.getElementById('btn-sent-email').addEventListener('click', function () {
+        const shareUrl = document.getElementById('sent-gift-url').value;
+        const poke = POKEMON_LIST.find(function (p) { return p.id === state.pokemonId; }) || POKEMON_LIST[0];
+        const pName = getEffectivePlayerName();
+        const senderName = getEffectivePartnerName();
+        const contact = parseRecipientContact(state.recipientContact);
+
+        const recipientAddr = encodeURIComponent(contact.email || '');
+        const subject = encodeURIComponent('🎄 A Special Pokémon Holiday Gift for ' + pName + '!');
+        const body = encodeURIComponent(
+          'Merry Christmas ' + pName + '!\n\n' +
+          senderName + ' and ' + poke.name + ' sent you a snowy Pokémon mini-adventure & holiday card!\n\n' +
+          'Open your gift here:\n' + shareUrl + '\n\n' +
+          'Happy Holidays! 🎁✨'
+        );
+
+        safeCopyToClipboard(shareUrl);
+        showCopyConfirmation('✓ Opening Email App (link also copied to clipboard!)');
+        audio.playSelect();
+
+        try {
+          window.location.href = 'mailto:' + recipientAddr + '?subject=' + subject + '&body=' + body;
+        } catch (e) {}
+      });
+
+      // 📲 More Share Options (Web Share API with Clipboard Fallback)
+      document.getElementById('btn-sent-native-share').addEventListener('click', function () {
+        const shareUrl = document.getElementById('sent-gift-url').value;
+        const poke = POKEMON_LIST.find(function (p) { return p.id === state.pokemonId; }) || POKEMON_LIST[0];
+        const pName = getEffectivePlayerName();
+        const senderName = getEffectivePartnerName();
+
+        audio.playSelect();
+        if (navigator.share) {
+          navigator.share({
+            title: '🎄 A Special Pokémon Holiday Gift for ' + pName + '!',
+            text: senderName + ' & ' + poke.name + ' sent you a playable Pokémon holiday card!',
+            url: shareUrl
+          }).catch(function () {
+            safeCopyToClipboard(shareUrl);
+            showCopyConfirmation('✓ Link copied to clipboard!');
+          });
+        } else {
+          const urlInput = document.getElementById('sent-gift-url');
+          urlInput.select();
+          safeCopyToClipboard(shareUrl);
+          showCopyConfirmation('✓ Link copied! Paste it into any messaging app.');
+        }
+      });
+
+      document.getElementById('btn-enter-game-preview').addEventListener('click', function () {
+        document.getElementById('gift-sent-modal').classList.add('hidden');
+        audio.playSelect();
+        startDialog([
+          {
+            speaker: 'FROSTLEAF TOWN',
+            text: 'Welcome to Frostleaf Town, ' + getEffectivePlayerName() + '! Walk north to meet ' + getEffectivePartnerName() + ' at the Christmas Tree!'
+          }
+        ]);
+      });
+
+      // Top Header Buttons
+      document.getElementById('btn-share-gift-top').addEventListener('click', function () {
+        openShareModal();
+        audio.playBlip();
+      });
+
+      document.getElementById('btn-edit-gift-top').addEventListener('click', function () {
+        syncInputsFromState();
+        renderAllStudioSelectors();
+        renderPokemonSelector();
+        updateLivePreview();
+        document.getElementById('gift-sent-modal').classList.add('hidden');
+        document.getElementById('recipient-welcome-modal').classList.add('hidden');
+        document.getElementById('present-modal').classList.add('hidden');
+        document.getElementById('customize-modal').classList.remove('hidden');
+        audio.playBlip();
+      });
+
+      document.getElementById('btn-read-card-top').addEventListener('click', function () {
+        syncStateFromInputs();
+        document.getElementById('customize-modal').classList.add('hidden');
+        document.getElementById('gift-sent-modal').classList.add('hidden');
+        document.getElementById('recipient-welcome-modal').classList.add('hidden');
+        openPresentCard();
+      });
+
+      document.getElementById('btn-music').addEventListener('click', function () {
+        const playing = audio.toggleBGM();
+        document.getElementById('music-icon').textContent = playing ? '🔊' : '🔇';
+        document.getElementById('music-label').textContent = playing ? 'BGM: ON' : 'BGM: OFF';
+      });
+
+      // Recipient Welcome Screen
+      function openRecipientWelcomeScreen() {
+        const poke = POKEMON_LIST.find(function (p) { return p.id === state.pokemonId; }) || POKEMON_LIST[0];
+        const pName = getEffectivePlayerName();
+        const senderName = getEffectivePartnerName();
+
+        document.getElementById('welcome-recipient').textContent = pName;
+        document.getElementById('welcome-sender').textContent = senderName.toUpperCase();
+        document.getElementById('welcome-sender-inline').textContent = senderName;
+
+        const wc = document.getElementById('welcome-poke-preview');
+        const wctx = wc.getContext('2d');
+        wctx.imageSmoothingEnabled = false;
+        wctx.clearRect(0, 0, 48, 48);
+        wctx.save();
+        wctx.scale(3, 3);
+        drawPokemonSprite(wctx, poke.id, 0, 0, 1);
+        wctx.restore();
+
+        document.getElementById('recipient-welcome-modal').classList.remove('hidden');
+      }
+
+      document.getElementById('btn-welcome-play').addEventListener('click', function () {
+        audio.playSelect();
+        document.getElementById('recipient-welcome-modal').classList.add('hidden');
+        startDialog([
+          {
+            speaker: 'FROSTLEAF TOWN',
+            text: 'Merry Christmas, ' + getEffectivePlayerName() + '! ' + getEffectivePartnerName() + ' is waiting for you north by the giant Christmas Tree!'
+          }
+        ]);
+      });
+
+      document.getElementById('btn-welcome-read-card').addEventListener('click', function () {
+        document.getElementById('recipient-welcome-modal').classList.add('hidden');
+        openPresentCard();
+      });
+
+      // =========================================================================
+      // 11. BOOT APPLICATION IMMEDIATELY
+      // =========================================================================
+      function generateAppleTouchIcon() {
+        try {
+          const iconCanvas = document.createElement('canvas');
+          iconCanvas.width = 180;
+          iconCanvas.height = 180;
+          const ictx = iconCanvas.getContext('2d');
+
+          // Snowy Midnight Backdrop
+          ictx.fillStyle = '#0f172a';
+          ictx.fillRect(0, 0, 180, 180);
+
+          // Stars
+          ictx.fillStyle = '#fef08a';
+          ictx.fillRect(28, 30, 5, 5);
+          ictx.fillRect(145, 26, 5, 5);
+          ictx.fillRect(110, 22, 4, 4);
+
+          // Snow Ground
+          ictx.fillStyle = '#f8fafc';
+          ictx.fillRect(0, 138, 180, 42);
+
+          // Mailbox on Right
+          ictx.fillStyle = '#78350f';
+          ictx.fillRect(132, 98, 12, 44);
+          ictx.fillStyle = '#dc2626';
+          ictx.beginPath();
+          ictx.roundRect(110, 68, 54, 34, [12, 12, 2, 2]);
+          ictx.fill();
+          ictx.fillStyle = '#ffffff';
+          ictx.fillRect(112, 68, 50, 7);
+          ictx.fillStyle = '#facc15';
+          ictx.fillRect(150, 48, 6, 24);
+          ictx.fillRect(156, 48, 12, 9);
+
+          // Poké Ball
+          const cx = 68;
+          const cy = 108;
+          const r = 42;
+          ictx.beginPath();
+          ictx.arc(cx, cy, r, 0, Math.PI * 2);
+          ictx.fillStyle = '#ffffff';
+          ictx.fill();
+          ictx.lineWidth = 6;
+          ictx.strokeStyle = '#020617';
+          ictx.stroke();
+
+          ictx.beginPath();
+          ictx.arc(cx, cy, r, Math.PI, 0);
+          ictx.fillStyle = '#ef4444';
+          ictx.fill();
+          ictx.stroke();
+
+          ictx.fillStyle = '#020617';
+          ictx.fillRect(cx - r, cy - 4, r * 2, 8);
+
+          ictx.beginPath();
+          ictx.arc(cx, cy, 13, 0, Math.PI * 2);
+          ictx.fillStyle = '#ffffff';
+          ictx.fill();
+          ictx.lineWidth = 5;
+          ictx.stroke();
+
+          // Santa Hat on Poké Ball
+          ictx.beginPath();
+          ictx.moveTo(34, 72);
+          ictx.quadraticCurveTo(64, 24, 108, 46);
+          ictx.lineTo(96, 72);
+          ictx.closePath();
+          ictx.fillStyle = '#dc2626';
+          ictx.fill();
+          ictx.lineWidth = 4;
+          ictx.stroke();
+
+          ictx.fillStyle = '#ffffff';
+          ictx.beginPath();
+          ictx.roundRect(30, 66, 72, 15, 7);
+          ictx.fill();
+          ictx.stroke();
+
+          ictx.beginPath();
+          ictx.arc(110, 48, 10, 0, Math.PI * 2);
+          ictx.fill();
+          ictx.stroke();
+
+          const link = document.createElement('link');
+          link.rel = 'apple-touch-icon';
+          link.href = iconCanvas.toDataURL('image/png');
+          document.head.appendChild(link);
+        } catch (e) {}
+      }
+
+      function bootApp() {
+        generateAppleTouchIcon();
+        syncInputsFromState();
+        renderAllStudioSelectors();
+        renderPokemonSelector();
+        updateLivePreview();
+
+        if (isSharedGiftLink) {
+          openRecipientWelcomeScreen();
+        } else {
+          document.getElementById('customize-modal').classList.remove('hidden');
+        }
+
+        gameLoop();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootApp);
+      } else {
+        bootApp();
+      }
+    })();
+  </script>
+</body>
+</html>
