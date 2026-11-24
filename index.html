@@ -1068,9 +1068,9 @@
           <div class="panel-box">
             <label for="input-player-name" class="section-label label-sky">1. RECIPIENT (PLAYER 1)</label>
             <input id="input-player-name" type="text" maxlength="18" value="" placeholder="e.g., Alex" class="gift-input" />
-            <input id="input-recipient-contact" type="text" value="" placeholder="XXXXXXXXXX (no +1) or friend@email.com" class="gift-input" style="margin-top:6px; font-size:12px;" />
+            <div style="font-size:11px; color:#94a3b8; margin-top:7px;">Snowy Adventurer:</div>
 
-            <div class="swatch-row">
+            <div class="swatch-row" style="margin-top:11px;">
               <div class="swatch-group">
                 <span class="swatch-caption">Hair</span>
                 <div id="player-hair-swatches" class="swatches"></div>
@@ -1142,15 +1142,63 @@
       'use strict';
 
       // =========================================================================
-      // 1. SANDBOX-SAFE WEB AUDIO CHIPTUNE ENGINE
+      // 1. WEB AUDIO SYNTHESIZER (8-BIT HOLIDAY BGM & SOUND EFFECTS)
       // =========================================================================
       class RetroAudio {
         constructor() {
           this.ctx = null;
-          this.bgmPlaying = false;
+          this.isPlaying = false;
           this.bgmTimer = null;
-          this.noteIdx = 0;
-          this.melody = [
+          this.step = 0;
+        }
+        ensureContext() {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().catch(function () {});
+          }
+        }
+        playTone(freq, duration, type, volume, delay) {
+          try {
+            this.ensureContext();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime + (delay || 0);
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type || 'square';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(volume || 0.05, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + duration);
+          } catch (e) {}
+        }
+        playBlip() { this.playTone(660, 0.07, 'square', 0.04, 0); }
+        playSelect() {
+          this.playTone(523.25, 0.08, 'square', 0.05, 0);
+          this.playTone(783.99, 0.14, 'square', 0.05, 0.07);
+        }
+        playFanfare() {
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          const self = this;
+          notes.forEach(function (n, idx) {
+            self.playTone(n, 0.18, 'triangle', 0.07, idx * 0.11);
+          });
+        }
+        toggleBGM() {
+          this.ensureContext();
+          if (this.isPlaying) {
+            this.isPlaying = false;
+            if (this.bgmTimer) clearInterval(this.bgmTimer);
+            this.bgmTimer = null;
+            return false;
+          }
+          this.isPlaying = true;
+          const melody = [
             329.63, 329.63, 329.63, 0,
             329.63, 329.63, 329.63, 0,
             329.63, 392.00, 261.63, 293.66,
@@ -1160,73 +1208,126 @@
             329.63, 293.66, 293.66, 329.63,
             293.66, 0, 392.00, 0
           ];
+          const self = this;
+          this.step = 0;
+          this.bgmTimer = setInterval(function () {
+            if (!self.isPlaying) return;
+            const freq = melody[self.step % melody.length];
+            if (freq > 0) self.playTone(freq, 0.22, 'triangle', 0.045, 0);
+            self.step++;
+          }, 260);
+          return true;
         }
+      }
 
-        ensureContext() {
-          try {
-            if (!this.ctx) {
-              const AudioCtx = window.AudioContext || window.webkitAudioContext;
-              if (AudioCtx) this.ctx = new AudioCtx();
+      // =========================================================================
+      // 3. SANDBOX-SAFE URL ENCODING / DECODING (IMESSAGE-PROOF COMPACT QUERY)
+      // =========================================================================
+      function toBase64Url(str) {
+        const bytes = new TextEncoder().encode(str);
+        let bin = '';
+        for (let i = 0; i < bytes.length; i++) {
+          bin += String.fromCharCode(bytes[i]);
+        }
+        return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+
+      function fromBase64Url(b64url) {
+        let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4 !== 0) b64 += '=';
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) {
+          bytes[i] = bin.charCodeAt(i);
+        }
+        return new TextDecoder().decode(bytes);
+      }
+
+      function getGiftPayloadFromURL() {
+        try {
+          const search = window.location.search || '';
+          const params = new URLSearchParams(search);
+          if (params.get('g')) return { mode: 'compact', val: params.get('g') };
+          if (params.get('gift')) return { mode: 'legacy', val: params.get('gift') };
+        } catch (e) {}
+        try {
+          const hash = window.location.hash || '';
+          if (hash.indexOf('#g=') === 0) return { mode: 'compact', val: hash.slice(3) };
+          if (hash.indexOf('#gift=') === 0) return { mode: 'legacy', val: hash.slice(6) };
+        } catch (e) {}
+        return null;
+      }
+
+      function loadStateFromURL() {
+        try {
+          const found = getGiftPayloadFromURL();
+          if (!found) return false;
+
+          if (found.mode === 'compact') {
+            const arr = JSON.parse(fromBase64Url(found.val));
+            if (Array.isArray(arr) && arr.length >= 11) {
+              state.playerName = arr[0] || '';
+              state.playerHair = arr[1] || '#4a2e1b';
+              state.playerCoat = arr[2] || '#e11d48';
+              state.playerHat = arr[3] || 'santa';
+              state.partnerName = arr[4] || '';
+              state.partnerHair = arr[5] || '#1e1b18';
+              state.partnerCoat = arr[6] || '#059669';
+              state.partnerHat = arr[7] || 'santa';
+              state.pokemonId = arr[8] || 'pikachu';
+              state.signJoke = arr[9] || '';
+              state.giftLetter = arr[10] || '';
+              return true;
             }
-            if (this.ctx && this.ctx.state === 'suspended') {
-              this.ctx.resume().catch(function () {});
+          } else {
+            const decoded = JSON.parse(decodeURIComponent(atob(found.val)));
+            if (decoded && typeof decoded === 'object') {
+              Object.assign(state, decoded);
+              return true;
             }
-          } catch (e) {}
-        }
-
-        playTone(freq, duration, type, gainVal) {
-          try {
-            this.ensureContext();
-            if (!this.ctx || !freq) return;
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.type = type || 'square';
-            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-            gain.gain.setValueAtTime(gainVal || 0.045, this.ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + (duration || 0.12));
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
-            osc.start();
-            osc.stop(this.ctx.currentTime + (duration || 0.12));
-          } catch (e) {}
-        }
-
-        playBlip() {
-          this.playTone(660, 0.06, 'square', 0.035);
-        }
-
-        playSelect() {
-          const self = this;
-          this.playTone(523.25, 0.08, 'triangle', 0.06);
-          setTimeout(function () { self.playTone(783.99, 0.13, 'triangle', 0.06); }, 75);
-        }
-
-        playFanfare() {
-          const self = this;
-          const notes = [523.25, 659.25, 783.99, 1046.5];
-          notes.forEach(function (n, i) {
-            setTimeout(function () { self.playTone(n, 0.17, 'triangle', 0.07); }, i * 105);
-          });
-        }
-
-        toggleBGM() {
-          const self = this;
-          this.ensureContext();
-          this.bgmPlaying = !this.bgmPlaying;
-          if (this.bgmPlaying) {
-            this.noteIdx = 0;
-            this.bgmTimer = setInterval(function () {
-              if (!self.bgmPlaying) return;
-              const freq = self.melody[self.noteIdx % self.melody.length];
-              if (freq > 0) self.playTone(freq, 0.17, 'triangle', 0.03);
-              self.noteIdx++;
-            }, 240);
-          } else if (this.bgmTimer) {
-            clearInterval(this.bgmTimer);
-            this.bgmTimer = null;
           }
-          return this.bgmPlaying;
+        } catch (e) {}
+        return false;
+      }
+
+      function encodeStateToURL() {
+        // Compact positional array + Base64URL (zero '=' or '+' or '/' chars so iMessage never breaks the link!)
+        const compactArr = [
+          getEffectivePlayerName(),
+          state.playerHair,
+          state.playerCoat,
+          state.playerHat,
+          getEffectivePartnerName(),
+          state.partnerHair,
+          state.partnerCoat,
+          state.partnerHat,
+          state.pokemonId,
+          getEffectiveSignJoke(),
+          getEffectiveGiftLetter()
+        ];
+        const encoded = toBase64Url(JSON.stringify(compactArr));
+        try {
+          const baseUrl = window.location.href.split('?')[0].split('#')[0];
+          return baseUrl + '?g=' + encoded;
+        } catch (e) {
+          return '?g=' + encoded;
         }
+      }
+
+      function safeCopyToClipboard(text) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(function () {});
+          }
+        } catch (e) {}
+        try {
+          const temp = document.createElement('input');
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand('copy');
+          document.body.removeChild(temp);
+        } catch (e) {}
       }
 
       const audio = new RetroAudio();
@@ -1290,7 +1391,6 @@
 
       const state = {
         playerName: '',
-        recipientContact: '',
         playerHair: '#4a2e1b',
         playerCoat: '#e11d48',
         playerHat: 'santa',
@@ -1316,92 +1416,6 @@
       }
       function getEffectiveGiftLetter() {
         return (state.giftLetter || '').trim() || DEFAULT_FALLBACKS.giftLetter;
-      }
-
-      // Smartly detect whether the user entered an email address or a 10-digit US phone number (no +1)
-      function parseRecipientContact(raw) {
-        const cleaned = (raw || '').trim();
-        if (!cleaned) return { email: '', phone: '' };
-        if (cleaned.indexOf('@') !== -1) {
-          return { email: cleaned, phone: '' };
-        }
-        let digits = cleaned.replace(/\D/g, '');
-        if (digits.length === 11 && digits.charAt(0) === '1') {
-          digits = digits.slice(1);
-        }
-        if (digits.length >= 7) {
-          return { email: '', phone: digits };
-        }
-        return { email: '', phone: '' };
-      }
-
-      // =========================================================================
-      // 3. SANDBOX-SAFE URL ENCODING / DECODING (#gift= or ?gift=)
-      // =========================================================================
-      function getGiftPayloadFromURL() {
-        try {
-          const search = window.location.search || '';
-          const params = new URLSearchParams(search);
-          if (params.get('gift')) return params.get('gift');
-        } catch (e) {}
-        try {
-          const hash = window.location.hash || '';
-          if (hash.indexOf('#gift=') === 0) return hash.slice(6);
-        } catch (e) {}
-        return null;
-      }
-
-      function loadStateFromURL() {
-        try {
-          const encoded = getGiftPayloadFromURL();
-          if (encoded) {
-            const decoded = JSON.parse(decodeURIComponent(atob(encoded)));
-            if (decoded && typeof decoded === 'object') {
-              Object.assign(state, decoded);
-              return true;
-            }
-          }
-        } catch (e) {}
-        return false;
-      }
-
-      function encodeStateToURL() {
-        const payload = {
-          playerName: getEffectivePlayerName(),
-          playerHair: state.playerHair,
-          playerCoat: state.playerCoat,
-          playerHat: state.playerHat,
-          partnerName: getEffectivePartnerName(),
-          partnerHair: state.partnerHair,
-          partnerCoat: state.partnerCoat,
-          partnerHat: state.partnerHat,
-          pokemonId: state.pokemonId,
-          signJoke: getEffectiveSignJoke(),
-          giftLetter: getEffectiveGiftLetter()
-        };
-        const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
-        try {
-          const baseUrl = window.location.href.split('?')[0].split('#')[0];
-          return baseUrl + '#gift=' + encoded;
-        } catch (e) {
-          return '#gift=' + encoded;
-        }
-      }
-
-      function safeCopyToClipboard(text) {
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).catch(function () {});
-          }
-        } catch (e) {}
-        try {
-          const temp = document.createElement('input');
-          temp.value = text;
-          document.body.appendChild(temp);
-          temp.select();
-          document.execCommand('copy');
-          document.body.removeChild(temp);
-        } catch (e) {}
       }
 
       const isSharedGiftLink = loadStateFromURL();
@@ -2228,7 +2242,6 @@
 
       function syncInputsFromState() {
         document.getElementById('input-player-name').value = state.playerName || '';
-        document.getElementById('input-recipient-contact').value = state.recipientContact || '';
         document.getElementById('input-partner-name').value = state.partnerName || '';
         document.getElementById('input-sign-joke').value = state.signJoke || '';
         document.getElementById('input-gift-letter').value = state.giftLetter || '';
@@ -2236,7 +2249,6 @@
 
       function syncStateFromInputs() {
         state.playerName = document.getElementById('input-player-name').value;
-        state.recipientContact = document.getElementById('input-recipient-contact').value.trim();
         state.partnerName = document.getElementById('input-partner-name').value;
         state.signJoke = document.getElementById('input-sign-joke').value;
         state.giftLetter = document.getElementById('input-gift-letter').value;
@@ -2257,7 +2269,7 @@
         pCtx.restore();
       }
 
-      ['input-player-name', 'input-recipient-contact', 'input-partner-name', 'input-sign-joke', 'input-gift-letter'].forEach(function (id) {
+      ['input-player-name', 'input-partner-name', 'input-sign-joke', 'input-gift-letter'].forEach(function (id) {
         document.getElementById(id).addEventListener('input', updateLivePreview);
       });
 
@@ -2416,58 +2428,48 @@
         });
       });
 
-      // Share & Play Overlay Actions
-      function showCopyConfirmation(customText) {
-        const msg = document.getElementById('sent-copy-msg');
-        msg.textContent = customText || '✓ Copied! Ready to paste anywhere!';
-        msg.classList.remove('hidden');
-        setTimeout(function () { msg.classList.add('hidden'); }, 3500);
+      function showCopyConfirmation(msg) {
+        const msgEl = document.getElementById('sent-copy-msg');
+        msgEl.textContent = msg;
+        msgEl.classList.remove('hidden');
       }
 
       document.getElementById('btn-sent-copy').addEventListener('click', function () {
         const urlInput = document.getElementById('sent-gift-url');
         urlInput.select();
         safeCopyToClipboard(urlInput.value);
-        showCopyConfirmation('✓ Copied! Ready to paste in a text or email!');
-        audio.playBlip();
+        showCopyConfirmation('✓ Copied! Ready to paste into Messages or any app.');
+        audio.playSelect();
       });
 
-      // 💬 Text to Friend (SMS URI)
+      // 💬 Pick Contact in Messages (Opens blank recipient field so iOS/Android lets you pick any contact!)
       document.getElementById('btn-sent-sms').addEventListener('click', function () {
         const shareUrl = document.getElementById('sent-gift-url').value;
         const poke = POKEMON_LIST.find(function (p) { return p.id === state.pokemonId; }) || POKEMON_LIST[0];
         const pName = getEffectivePlayerName();
         const senderName = getEffectivePartnerName();
-        const contact = parseRecipientContact(state.recipientContact);
 
         const smsBody = encodeURIComponent(
           '🎄 Merry Christmas ' + pName + '! ' + senderName + ' & ' + poke.name +
           ' sent you a playable snowy Pokémon holiday card! Open your gift here: ' + shareUrl
         );
 
-        // Cross-platform iOS / Android / Desktop SMS link format
-        const smsUri = contact.phone
-          ? 'sms:' + contact.phone + '?&body=' + smsBody
-          : 'sms:?&body=' + smsBody;
-
         safeCopyToClipboard(shareUrl);
-        showCopyConfirmation('✓ Opening Messages (link also copied to clipboard!)');
+        showCopyConfirmation('✓ Opening Messages — just pick your friend & hit send!');
         audio.playSelect();
 
         try {
-          window.location.href = smsUri;
+          window.location.href = 'sms:?&body=' + smsBody;
         } catch (e) {}
       });
 
-      // 📧 Email to Friend (mailto: URI)
+      // 📧 Email to Friend (mailto: URI with blank To: field so you pick from your Contacts)
       document.getElementById('btn-sent-email').addEventListener('click', function () {
         const shareUrl = document.getElementById('sent-gift-url').value;
         const poke = POKEMON_LIST.find(function (p) { return p.id === state.pokemonId; }) || POKEMON_LIST[0];
         const pName = getEffectivePlayerName();
         const senderName = getEffectivePartnerName();
-        const contact = parseRecipientContact(state.recipientContact);
 
-        const recipientAddr = encodeURIComponent(contact.email || '');
         const subject = encodeURIComponent('🎄 A Special Pokémon Holiday Gift for ' + pName + '!');
         const body = encodeURIComponent(
           'Merry Christmas ' + pName + '!\n\n' +
@@ -2481,7 +2483,7 @@
         audio.playSelect();
 
         try {
-          window.location.href = 'mailto:' + recipientAddr + '?subject=' + subject + '&body=' + body;
+          window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
         } catch (e) {}
       });
 
